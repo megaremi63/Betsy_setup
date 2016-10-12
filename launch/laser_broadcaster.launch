@@ -1,0 +1,4 @@
+<launch>
+<node pkg="tf" type="static_transform_publisher" name="laser_broadcaster" args="0.51 0 0.34 0 0 0 1 base_link laser 100" />
+</launch>
+

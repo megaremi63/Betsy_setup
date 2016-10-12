@@ -1,0 +1,45 @@
+<launch>
+	<node pkg="tf" type="static_transform_publisher" name="laser_broadcaster" args="0.51 0 0.34 0 0 0 1 base_link base_laser 100" />
+	<node pkg="robot_setup_" type="setup" name="Robot_setup" />
+	<node name="laser_scan" pkg="urg_node" type="urg_node">
+        <param name="~ip_address" type="string" value="192.168.0.10" />
+		<param name="frame_id" value="laser"/>
+    </node>
+	<node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen">
+        <param name="~port" value="/dev/ttyACM0" />
+	</node>
+	 <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+		<param name="map_udpate_interval" value="1.0"/>
+		<param name="maxUrange" value="5.0"/>
+		<param name="sigma" value="0.1"/>
+		<param name="kernelSize" value="1"/>
+		<param name="lstep" value="0.15"/>
+		<param name="astep" value="0.15"/>
+		<param name="iterations" value="1"/>
+		<param name="lsigma" value="0.1"/>
+		<param name="ogain" value="3.0"/>
+		<param name="lskip" value="1"/>
+		<param name="srr" value="0.1"/>
+		<param name="srt" value="0.2"/>
+		<param name="str" value="0.1"/>
+		<param name="stt" value="0.2"/>
+		<param name="linearUpdate" value="1.0"/>
+		<param name="angularUpdate" value="0.5"/>
+		<param name="temporalUpdate" value="0.4"/>
+		<param name="resampleThreshold" value="0.5"/>
+		<param name="particles" value="10"/>
+		<param name="xmin" value="-5.0"/>
+		<param name="ymin" value="-5.0"/>
+		<param name="xmax" value="5.0"/>
+		<param name="ymax" value="5.0"/>
+		<param name="delta" value="0.02"/>
+		<param name="llsamplerange" value="0.01"/>
+		<param name="llsamplestep" value="0.05"/>
+		<param name="lasamplerange" value="0.05"/>
+		<param name="lasamplestep" value="0.05"/>
+		<param name="inverted_laser" value="true"/>
+		<param name="scan" value="/most_intense"/>
+  </node>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d"/>
+</launch>
+
