@@ -187,3 +187,8 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(odom_subscriber src/odom_subscriber.cpp)
+add_executable(twist_to_motor src/twist_to_motor.cpp)
+target_link_libraries(betsy_setup ${catkin_LIBRARIES})
+
