@@ -2,7 +2,7 @@
 <robot name="differential_wheeled_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
   
 
-  <xacro:include filename="$(find mastering_ros_robot_description_pkg)/urdf/wheel.urdf.xacro" /> 
+  <xacro:include filename="$(find betsy_setup)/urdf/wheel.urdf.xacro" /> 
 
 
 <!-- Defining the colors used in this robot -->
@@ -31,176 +31,60 @@
   <property name="M_PI_2" value="1.570796327" />
   <property name="DEG_TO_RAD" value="0.017453293" />
 
-  <!-- Main body dimensions -->
-  <!-- Main Body square base   -->
-  <property name="base_height" value="0.66" /> 
+  <!-- Main body radius and height -->
+  <!-- Main Body Cylinder base   -->
+  <property name="base_height" value="0" /> 
+  <!--property name="base_radius" value="0.15" /--> 
+  <property name="base_mass" value="0.0001" /> <!-- in kg-->
+  
   <property name="base_width" value="0.40" />
   <property name="base_length" value="0.55" /> 
-  <property name="base_mass" value="0.1" /> <!-- in kg-->
- 
-  <!-- Main body triangle dimensions -->
-  <property name="base_t_mass" value="0.1" /> <!-- in kg-->
-  <property name="triangle_length" value="0.3" />
-  <property name="triangle_width" value="0.1" />
+  
+
+
+  <!-- caster wheel radius and height -->
+  <!-- caster wheel mass -->
+  <property name="caster_l_height" value="0.04" /> 
+  <property name="caster_l_radius" value="0.03" /> 
+  <property name="caster_l_mass" value="0.5" /> <!-- in kg-->
+
+
+
+  <!-- caster wheel radius and height -->
+  <!-- caster wheel mass -->
+  <property name="caster_r_height" value="0.04" /> 
+  <property name="caster_r_radius" value="0.03" /> 
+  <property name="caster_r_mass" value="0.5" /> <!-- in kg-->
+
+
+
+<!-- Main body triangle dimensions -->
+  <property name="base_t_mass" value="2" /> <!-- in kg-->
+  <property name="triangle_length" value="0.18" />
+  <property name="triangle_width" value="0.3" />
   <property name="triangle_height" value="0.1" />
 
 
-  <!--left caster wheel radius and height -->
-  <!-- caster wheel mass -->
+  <!--left caster wheel 
+  
+  
+  radius and height >
+
   <property name="caster_l_height" value="0.04" /> 
   <property name="caster_l_radius" value="0.05" /> 
-  <property name="caster_l_mass" value="0.1" /> <!-- in kg-->
+  <property name="caster_l_mass" value="0.5" /--> <!-- in kg-->
 
 
 
-  <!--right caster wheel radius and height -->
-  <!-- caster wheel mass -->
+  <!--right caster wheel radius and height >
+
   <property name="caster_r_height" value="0.04" /> 
   <property name="caster_r_radius" value="0.05" /> 
-  <property name="caster_r_mass" value="0.1" /> <!-- in kg-->
+  <property name="caster_r_mass" value="0.5" /--> <!-- in kg-->
 
 
 
-
-  <!-- Wheels -->
-
-  <property name="wheel_mass" value="0.1" />  <!-- in kg-->
-  
-  <property name="base_x_origin_to_wheel_origin" value="0.025" />
-  <property name="base_y_origin_to_wheel_origin" value="0.40" />
-  <property name="base_z_origin_to_wheel_origin" value="-0.06" />
-
-
-  <!-- Hokuyo Laser scanner -->
-  <property name="hokuyo_size" value="0.05" />
-
-
-  <!-- EDITED -->
-  <!-- m = mass h = hauteur w = largeur l = longueur -->
-
-  <!-- Macro for calculating inertia of cube -->
-  <macro name="box_inertia" params="m h w l">
-    <inertia  ixx="${m*(h*h+l*l)/12}" ixy = "0" ixz = "0"
-              iyy="${m*(w*w+l*l)/12}" iyz = "0"
-              izz="${m*(w*w+h*h)/12}" /> 
-  </macro>
-
-  <!-- Macro for calculating inertia of triangle -->
-  <macro name="trangle_inertia" params="m h w l">
-    <inertia  ixx="0" ixy = "0" ixz = "0"
-              iyy="0" iyz = "0"
-              izz="0" /> 
-  </macro>
-
-
-  <!-- BASE-FOOTPRINT -->
-  <!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin -->
-  <link name="base_footprint">
-    <inertial>
-      <mass value="0.0001" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-          iyy="0.0001" iyz="0.0" 
-          izz="0.0001" />
-    </inertial>
-    <visual>
-        <origin xyz="0.6 0 0" rpy="0 0 0" />
-        <geometry>
-            <box size="0.001 0.001 0.001" />
-        </geometry>
-    </visual>
-  </link>
-
-  <gazebo reference="base_footprint">
-    <turnGravityOff>false</turnGravityOff>
-  </gazebo>
-
-  <joint name="base_footprint_joint" type="fixed">
-    <origin xyz="0 0 ${wheel_radius - base_z_origin_to_wheel_origin}" rpy="0 0 0" />
-    <parent link="base_footprint"/>
-    <child link="base_link" />
-  </joint>
-  
-  <!-- BASE-LINK -->
-  <!--Actual body/chassis of the robot-->
-  <link name="base_link">
-    <inertial>
-      <mass value="${base_mass}" />
-      <origin xyz="0 0 0" />
-      <!--The 3x3 rotational inertia matrix. -->
-        <box_inertia  m="${base_mass}" h="${base_height}" w="${base_width}" l="${base_length}" />
-
-    </inertial>    
-    <visual>
-      <origin xyz="-${base_length/2 - 0.06} 0 ${base_height/2}" rpy="0 0 0" />
-      <geometry>
-
-          <box size= "${base_length} ${base_width} ${base_height}" />
-
-      </geometry>
-      <material name="White" />
-    </visual>  
-    <collision>
-      <origin xyz="-${base_length/2 - 0.06} 0 ${base_height/2}" rpy="0 0 0 " />
-      <geometry>
-
-          <box size= "${base_length} ${base_width} ${base_height}" />
-
-      </geometry>
-    </collision>     
-  </link>
-  <gazebo reference="base_link">
-    <material>Gazebo/White</material>
-    <turnGravityOff>false</turnGravityOff>
-  </gazebo>
-
-  <!-- BASE-triangle -->
- 
-  <link name="base_triangle">
-    <inertial>
-      <mass value="${base_t_mass}" />
-      <origin xyz="0 0 0" />
-      
-        <box_inertia  m="${base_mass}" h="${base_height}" w="${base_width}" l="${base_length}" />
-
-    </inertial>    
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-
-          <box size= "${triangle_length} ${triangle_width} ${triangle_height}" />
-
-      </geometry>
-      <material name="White" />
-    </visual>  
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0 " />
-      <geometry>
-
-          <box size= "${triangle_length} ${triangle_width} ${triangle_height}" />
-
-      </geometry>
-    </collision>     
-  </link>
-
-  <joint name="base_triangle" type="fixed">
-      <parent link="base_link"/>
-      <child link="base_triangle"/>
-      <origin xyz="${triangle_length/2} 0 ${triangle_height/2}" rpy="0 0 0"/>
-    </joint>
-
-  <gazebo reference="base_triangle">
-    <material>Gazebo/White</material>
-    <turnGravityOff>false</turnGravityOff>
-  </gazebo>
-
-
-
-
-
-<!--Caster left   -->  
-
-    <link name="caster_left_link">
+<link name="caster_left_link">
 
     <visual>
       <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
@@ -284,14 +168,193 @@
   <gazebo reference="caster_right_link">
     <turnGravityOff>false</turnGravityOff>
   </gazebo>
+  
+
+
+
+
+
+
+  <!-- Wheels -->
+
+  <property name="wheel_mass" value="2.5" /> --> <!-- in kg-->
+  
+  <property name="base_x_origin_to_wheel_origin" value="0.25" />
+  <property name="base_y_origin_to_wheel_origin" value="0.3" />
+  <property name="base_z_origin_to_wheel_origin" value="0.0" />
+
+
+  <!-- Hokuyo Laser scanner -->
+  <property name="hokuyo_size" value="0.05" />
+
+
+
+  <!-- Macro for calculating inertia of cylinder -->
+  <macro name="box_inertia" params="m h w l">
+            <inertia  ixx="${m*(h*h+l*l)/12}" ixy = "0" ixz = "0"
+              iyy="${m*(w*w+l*l)/12}" iyz = "0"
+              izz="${m*(w*w+h*h)/12}" /> 
+  </macro>
+
+
+  <!-- BASE-FOOTPRINT -->
+  <!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin -->
+  <link name="base_footprint">
+    <inertial>
+      <mass value="0.0001" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+          iyy="0.0001" iyz="0.0" 
+          izz="0.0001" />
+    </inertial>
+    <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+            <box size="0.001 0.001 0.001" />
+        </geometry>
+    </visual>
+  </link>
+
+  <gazebo reference="base_footprint">
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0 0 ${wheel_radius - base_z_origin_to_wheel_origin}" rpy="0 0 0" />
+    <parent link="base_footprint"/>
+    <child link="base_link" />
+  </joint>
+  
+  <!-- BASE-LINK -->
+  <!--Actual body/chassis of the robot-->
+  <link name="base_link">
+    <!--inertial>
+      <mass value="${base_mass}" />
+      <origin xyz="0 0 0" />
+ 
+        <box_inertia  m="${base_mass}" h="${base_height}" w="${base_width}" l="${base_length}" />
+    </inertial>    
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+          <box size= "${base_length} ${base_width} ${base_height}" />
+      </geometry>
+      <material name="White" />
+    </visual>  
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+
+          <box size= "${base_length} ${base_width} ${base_height}" />
+
+      </geometry>
+    </collision-->       
+  </link>
+  <gazebo reference="base_link">
+    <material>Gazebo/White</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+  
+
+
+
+
+<!--Caster front  >
+
+    <link name="caster_front_link">
+
+    <visual>
+      <origin xyz="0 0.02 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+	<sphere radius="${caster_f_radius}" />
+      </geometry>
+      <material name="Black" />
+    </visual>  
+
+
+
+      <collision>
+        <geometry>
+
+	<sphere radius="${caster_f_radius}" />
+
+        </geometry>
+      <origin xyz="0 0.02 0" rpy="${M_PI/2} 0 0" />
+      </collision>      
+      <inertial>
+        <mass value="${caster_f_mass}" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                 iyy="0.001" iyz="0.0" 
+                 izz="0.001" />
+      </inertial>
+    </link>
+
+
+
+ <joint name="caster_front_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="caster_front_link"/>
+      <origin xyz="0.115 0.0 0.007" rpy="${-M_PI/2} 0 0"/>
+    </joint>
+
+
+  <gazebo reference="caster_front_link">
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo-->
+    
+
+
+<!--Caster back  >
+
+    <link name="caster_back_link">
+
+    <visual>
+      <origin xyz="0.02 0.02 0 " rpy="${M_PI/2} 0 0" /> 
+
+      <geometry>
+
+
+	<sphere radius="${caster_b_radius}" />
+
+
+      </geometry>
+      <material name="Black" />
+    </visual>  
+
+
+
+      <collision>
+        <geometry>
+		<sphere radius="${caster_b_radius}" />
+        </geometry>
+      <origin xyz="0 0.02 0 " rpy="${M_PI/2} 0 0" /> 
+      </collision>      
+      <inertial>
+        <mass value="${caster_b_mass}" />
+        <origin xyz="0 0 0" />        
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                 iyy="0.001" iyz="0.0" 
+                 izz="0.001" />
+      </inertial>
+    </link>
+
+    <joint name="caster_back_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="caster_back_link"/>
+      <origin xyz="-0.135 0.0 0.009" rpy="${-M_PI/2} 0 0"/>
+    </joint>
+
+
+  <gazebo reference="caster_back_link">
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo-->
 
 
 <!-- Wheel Definitions -->
 
   <wheel fb="front" lr="right" parent="base_link" translateX="0" translateY="0.5" flipY="1"/>
   <wheel fb="front" lr="left" parent="base_link" translateX="0" translateY="-0.5" flipY="1"/>
-
-
 	 
   <!-- SENSORS -->
   
@@ -307,8 +370,8 @@
     </visual>
   </link>
   <joint name="hokuyo_joint" type="fixed">
-    <origin xyz="${triangle_length/2 + hokuyo_size/2} 0 ${hokuyo_size/2}" rpy="0 0 0" />
-    <parent link="base_triangle"/>
+    <origin xyz="${base_width - hokuyo_size/2} 0 ${0.15+hokuyo_size/4}" rpy="0 0 0" />
+    <parent link="base_link"/>
     <child link="hokuyo_link" />
   </joint>
   <gazebo reference="hokuyo_link">
